@@ -2,7 +2,7 @@
 
 = Introduction =
 
-A tool to manipulate the Amazon Web Services EC2 
+A tool to manipulate the Amazon Web Services [http://developer.amazonwebservices.com/connect/kbcategory.jspa?categoryID=84 EC2] 
 
 = Details =
 
