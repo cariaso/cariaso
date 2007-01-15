@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-#http://www.cariaso.com
+# http://www.cariaso.com
+# http://code.google.com/p/cariaso/
 
 """
 
