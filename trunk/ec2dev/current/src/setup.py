@@ -1,9 +1,14 @@
+#!/usr/bin/env python
+# http://www.cariaso.com
+# http://code.google.com/p/cariaso/
+
 from distutils.core import setup
-import py2exe
 import sys
 
 
-
+if sys.platform != "win32":
+    print "You probably have no need for this program"
+    sys.exit()
 
 try:
     import py2exe
@@ -13,11 +18,11 @@ except Exception, e:
     pause = raw_input()
     sys.exit()
 
+
 # If run without args, build executables, in quiet mode.
 if len(sys.argv) == 1:
     sys.argv.append("py2exe")
     sys.argv.append("-q")
-
 
 
 
