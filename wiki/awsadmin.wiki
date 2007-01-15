@@ -8,6 +8,4 @@ A tool to manipulate the Amazon Web Services [http://developer.amazonwebservices
 
 Setup notes
   * needs [http://www.python.org/download/ Python]
-  * if python2.4 or earlier, The ElementTree XML library http://effbot.org/zone/element-index.htm is
-required for versions of Python prior to 2.5.  From version 2.5, the Python
-standard library includes ElementTree.
+  * if python2.4 or earlier, The ElementTree XML library http://effbot.org/zone/element-index.htm
