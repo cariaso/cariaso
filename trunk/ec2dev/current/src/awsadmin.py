@@ -26,16 +26,30 @@ separately.
 import EC2
 import sys
 import getopt
+import os
+
+
 
 
 class Application:
     def __init__(self, opts, args):
- 	AWS_ACCESS_KEY_ID = '<INSERT YOUR AWS ACCESS KEY ID HERE>'
-        AWS_SECRET_ACCESS_KEY = '<INSERT YOUR AWS SECRET ACCESS KEY HERE>'
+
+ 	AWS_ACCESS_KEY_ID = None
+        AWS_SECRET_ACCESS_KEY = None
+
+        if os.environ.has_key('AWS_ACCESS_KEY_ID'):
+            AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+
+        if os.environ.has_key('AWS_SECRET_ACCESS_KEY'):
+            AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
  
 	terminateIDs=[]
 	runIDs=[]
 	for o, a in opts:
+            if o in ("-h", "--help"):
+                raise Usage()
+
+
             if o in ("-a", "--public"):
                 AWS_ACCESS_KEY_ID = a
             if o in ("-s", "--private"):
@@ -81,8 +95,27 @@ class Application:
 
 
 class Usage(Exception):
-    def __init__(self, msg):
-        self.msg = msg
+    def __init__(self, msg=None):
+        if msg:
+            self.msg = msg
+        else:
+            self.msg = """\
+%(self-name)s -a AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY
+
+or you can set environment variables and omit the -a and -s switches
+set AWS_ACCESS_KEY_ID=MY_KEY_ID
+set AWS_SECRET_ACCESS_KEY=MY_SECRET_KEY
+
+%(self-name)s
+
+%(self-name)s --run-instance ami-123456
+%(self-name)s --run ami-123456
+
+%(self-name)s --terminate-instance i-123456
+%(self-name)s --terminate i-123456
+""" % {'self-name':'awsadmin.py'}
+
+
 
 def main(argv=None):
     if argv is None:
