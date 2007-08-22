@@ -7,13 +7,15 @@ use Data::Dumper;
 use FileHandle;
 use Bio::SeqIO;
 
-my $fhin = FileHandle->new("gzip -dc /mnt/mnt/keepers/allsnps-20070802.blasttable.gz |");
+my $fnin = $ARGV[0];
+#my $fhin = FileHandle->new("gzip -dc /mnt/mnt/keepers/allsnps-20070802.blasttable.gz |");
+my $fhin = FileHandle->new($fnin);
 
 my $max = 1000;
 my $count=0;
 my $wanted = {};
 while (my $line = <$fhin>) {
-    my ($rs, $id) = $line =~ /\|(rs\d+) gnl\|ti\|(\d+)/;
+    my ($rs, $id) = $line =~ /\|(rs\d+).*? gnl\|ti\|(\d+)/;
     $wanted->{$id}->{$rs}++;
 
     $count++;
@@ -23,7 +25,7 @@ print "loaded $count blast rows\n";
 
 
 
-my $file = $ARGV[0];
+my $file = $ARGV[1];
 my $fasta = FileHandle->new("gzip -dc $file |");
 
 

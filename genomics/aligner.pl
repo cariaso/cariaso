@@ -15,10 +15,21 @@ use Bio::Tools::Run::Alignment::Clustalw;
 
 use Bio::PrimarySeq;
 
+if (!@ARGV) {
+    usage();
+}
+
+
 my $allsnps_fn = $ARGV[0];
+
+
+
+my $countsfh = FileHandle->new(">/tmp/counts.txt");
 my $fasta = FileHandle->new($allsnps_fn);
 my $seq_in = Bio::SeqIO->new('-fh' => $fasta,
 			     '-format' => 'fasta');
+
+
 
 
 my $sim4 = Bio::Tools::Run::Alignment::Sim4->new();
@@ -33,11 +44,12 @@ my $count = "seq000";
 my $resultsdir = 'results';
 
 while (my $inseq = $seq_in->next_seq) {
+    my %seen = ();
 
     eval {
 	my ($rsid) = $inseq->display_id() =~ /\|(rs\d+)/;
 	
-	#next unless $rsid =~ /rs(28928896)/;
+	#next unless $rsid =~ /rs(662799)/;
 	#next unless $rsid =~ /rs(6318|1800321|3788853|4420638)/;
 	print "checking $rsid\n";
 	
@@ -72,6 +84,16 @@ while (my $inseq = $seq_in->next_seq) {
 	    #print Dumper $exon_sets[0];
 	    my $reflen = $inseq->length;
 	    my $snppos = $reflen / 2;
+	    if ($inseq->display_id() =~ /allelePos=(\d+)/) {
+		$snppos = $1;
+	    }
+	    if ($inseq->desc() =~ /allelePos=(\d+)/) {
+		$snppos = $1;
+	    }
+	    if ($inseq->desc() =~ /\|pos=(\d+)/) {
+		$snppos = $1;
+	    }
+
 	    foreach my $set (@exon_sets){
 		foreach my $exon($set->sub_SeqFeature){
 
@@ -91,7 +113,7 @@ while (my $inseq = $seq_in->next_seq) {
 		    
 
 		    if (($exon->start > $snppos) || ($snppos > $exon->end)) {
-			print "\tdoes not straddle snp\n";
+			print "\tdoes not straddle snp at $snppos\n";
 			next;
 		    }
 
@@ -108,8 +130,14 @@ while (my $inseq = $seq_in->next_seq) {
 
 
 
+		    if ($seen{$exon->est_hit->seq_id}) {
+			print "\trejected duplicate",$exon->est_hit->seq_id,"\n";
+			next;
+		    }
 
 
+
+		    $seen{$exon->est_hit->seq_id}++;
 
 		    if ($exon->strand == 1) {
 			push @fwd, $lookup{$exon->est_hit->seq_id};
@@ -140,10 +168,46 @@ while (my $inseq = $seq_in->next_seq) {
 	    if (($#fwd >= 0) || ($#rev >= 0)) {
 		
 		eval {
+
+
 		    my $raln = $factory->align([@rev, @fwd, $inseq]);
+
 		    my $rout = Bio::AlignIO->new(-file   => ">$resultsdir/$rsid.aln" ,
 						 -format => 'clustalw');
 		    $rout->write_aln($raln);
+
+
+		    my $id = $inseq->display_id;
+		    my $id2 = substr($id, 0, 30);
+		    print "$id ->\n$id2\n";
+		
+		    my $pos = $raln->column_from_residue_number($id2, $snppos);
+		    print "Adjusted $snppos -> $pos\n";
+
+
+		    my $mini_aln = $raln->slice($pos-5,$pos+5);
+		    my $tightfn = "$resultsdir/$rsid-tight.aln";
+		    my $sout = Bio::AlignIO->new(-file   => ">$tightfn",
+						 -format => 'clustalw');
+		    $sout->write_aln($mini_aln);
+		    print `cat $tightfn`;
+
+
+		    my $rout = Bio::AlignIO->new(-file   => ">$resultsdir/$rsid.aln" ,
+						 -format => 'clustalw');
+		    $rout->write_aln($raln);
+
+		    my %count = ();
+                    foreach my $seq ($raln->each_seq) {
+			my $res = $seq->subseq($pos, $pos);
+			$count{uc $res}++;
+		    }
+		    print Dumper \%count;
+		    print $countsfh join("\t", $inseq->display_id,$count{A}, $count{T}, $count{C}, $count{G}, $count{N}, $count{'.'}),"\n";
+		    $countsfh->flush();
+
+
+
 		};
 		if ($@) {
 		    print STDERR "error with $rsid $@\n";
@@ -160,3 +224,7 @@ while (my $inseq = $seq_in->next_seq) {
 
 
 
+sub usage {
+    print "$0 rssnps.fasta";
+    exit;
+}
