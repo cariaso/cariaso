@@ -24,6 +24,9 @@ while (defined(my $entry = $d->read)) {
     next unless $entry =~ /-tight\.aln$/;
     my $fh = FileHandle->new("$dirname/$entry");
     my ($rsnum) = $entry =~ /(rs\d+)/;
+
+    next if $rsnum =~ /rs4420638$/i; # Watson asked not to know this one
+
     my @lines = grep {!/^\s*$/} grep {!/CLUSTAL/} <$fh>;
 
     my $text = $bot->get_text($rsnum);
