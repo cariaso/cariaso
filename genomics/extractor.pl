@@ -7,8 +7,12 @@ use Data::Dumper;
 use FileHandle;
 use Bio::SeqIO;
 
+
+usage() unless $ARGV[0];
+
 my $fnin = $ARGV[0];
-#my $fhin = FileHandle->new("gzip -dc /mnt/mnt/keepers/allsnps-20070802.blasttable.gz |");
+
+
 my $fhin = FileHandle->new($fnin);
 
 my $max = 1000;
@@ -38,8 +42,6 @@ $count = 0;
 my $resultsdir = 'results';
 `mkdir -p $resultsdir`;
 my $seq_out;
-#my @wanted;
-my $wanted2;
 my $id;
 my $inseq;
 while ($inseq = $seq_in->next_seq) {
@@ -57,3 +59,8 @@ while ($inseq = $seq_in->next_seq) {
 print "scanned $count fasta records in $file\n";
 
 
+sub usage {
+
+    print "$0 blasttable fasta.gz\n\n";
+    exit;
+}

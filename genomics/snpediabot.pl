@@ -25,16 +25,18 @@ while (defined(my $entry = $d->read)) {
     my $fh = FileHandle->new("$dirname/$entry");
     my ($rsnum) = $entry =~ /(rs\d+)/;
 
-    next if $rsnum =~ /rs4420638$/i; # Watson asked not to know this one
+    #next if $rsnum =~ /rs4420638$/i; # Watson asked not to know this one
 
     my @lines = grep {!/^\s*$/} grep {!/CLUSTAL/} <$fh>;
+    
 
-    my $text = $bot->get_text($rsnum);
-    $text .= "\n\n{{ watson alignment | preformatted=\n<pre>";
+    my $text = $bot->get_text('User:Venter');
+    $text .= "\n\n{{ venter alignment | snp=$rsnum | preformatted=\n<pre>";
     $text .= join('', @lines);
     $text .= "</pre>\n}}\n";
+    #$text =~ s/(dbSNP\|)(rs\d+)/$1\[\[$2\]\]/;
     print "$rsnum\n";
     print $text;
-    $bot->edit($rsnum, $text, 'adding watson analysis');
+    $bot->edit('User:Venter', $text, 'adding venter analysis');
 }
 
