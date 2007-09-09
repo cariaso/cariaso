@@ -24,7 +24,7 @@ my $allsnps_fn = $ARGV[0];
 
 
 
-my $countsfh = FileHandle->new(">/tmp/counts.txt");
+my $countsfh = FileHandle->new(">/tmp/counts-venter.txt");
 my $fasta = FileHandle->new($allsnps_fn);
 my $seq_in = Bio::SeqIO->new('-fh' => $fasta,
 			     '-format' => 'fasta');
@@ -185,7 +185,7 @@ while (my $inseq = $seq_in->next_seq) {
 		    print "Adjusted $snppos -> $pos\n";
 
 
-		    my $mini_aln = $raln->slice($pos-5,$pos+5);
+		    my $mini_aln = $raln->slice($pos-8,$pos+8);
 		    my $tightfn = "$resultsdir/$rsid-tight.aln";
 		    my $sout = Bio::AlignIO->new(-file   => ">$tightfn",
 						 -format => 'clustalw');
