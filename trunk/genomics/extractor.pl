@@ -29,8 +29,35 @@ print "loaded $count blast rows\n";
 
 
 
+
+
+
+use File::Basename;
+
 my $file = $ARGV[1];
+
+my $tis = {};
+if ($file =~ /\.idx$/) {
+    my $dir = dirname($file);
+    my $idxfh = FileHandle->new($file);
+    foreach my $line (<$idxfh>) {
+	print $line;
+	my ($fastagz, $ti) = $line =~ /^(\S+)\s+:\s+>gnl\|ti\|(\d+)\s+/;
+	$tis->{$ti} = "$dir/$fastagz";
+    }
+}
+
+print Dumper $tis;
+exit;
+
+
+
 my $fasta = FileHandle->new("gzip -dc $file |");
+
+
+
+
+
 
 
 
@@ -62,5 +89,7 @@ print "scanned $count fasta records in $file\n";
 sub usage {
 
     print "$0 blasttable fasta.gz\n\n";
+    print "or\n";
+    print "$0 blasttable filename.idx\n\n";
     exit;
 }
