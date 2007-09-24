@@ -11,8 +11,14 @@ use Bio::SeqIO;
 
 use strict;
 use Bio::SearchIO; 
+
+
+my $infn = '-';
+$infn = $ARGV[0] if $ARGV[0];
+
 my $in = new Bio::SearchIO(-format => 'blast', 
-                           -file   => '-');
+                           -file   => $infn);
+
 while( my $result = $in->next_result ) {
     while( my $hit = $result->next_hit ) {
 	
