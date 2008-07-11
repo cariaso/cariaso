@@ -1,9 +1,16 @@
 !define py2exeOutputDir 'dist'
-!define exe             'promethease.exe'
-!define icon            'icon1.ico'
+!define exe             'demo.exe'
 !define compressor      'lzma'  ;one of 'zlib', 'bzip2', 'lzma'
-; allowing multiple instances
+
+;comment in and customize, if you have an icon
+;!define icon            'icon1.ico'
+
+
+; if you only want to allowing one instance to run at a time, remove the ; from the next line
 ;!define onlyOneInstance
+
+
+
 
 ; - - - - do not edit below this line, normaly - - - -
 !ifdef compressor
