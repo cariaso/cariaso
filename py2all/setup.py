@@ -1,32 +1,24 @@
-# Cezar
-#
-# I've begun some commenting and refactorings, if anything seems amiss please check the earliest version from the svn repos
-#
-
-
-
-
-
-    
-
-
-    
-
 import sys, os
 import shutil
 from distutils.core import setup
-
-__VERSION__ = '0.1'
-
 
 
 shutil.rmtree('dist', True) 
 shutil.rmtree('build', True) 
 
 
-
-
 rawfile = 'demo.py'
+
+
+options = dict(
+    version='0.1',
+    name='DemoProg',
+    description="opens a demo window",
+    author="cariaso",
+    author_email="cariaso@yahoo.com",
+    url="http://www.promethease.com",
+    )
+
 
 if sys.platform == 'darwin':
     import ez_setup
@@ -52,27 +44,22 @@ if sys.platform == 'darwin':
 elif sys.platform == 'win32':
     
     import py2exe
+
+
+    # this allows me to build the dist directory by double clicking setup.py
     sys.argv.append('py2exe')
 
-    datafiles = []
-    for f in (
-        'icon1.ico',
-        "C:\\WINDOWS\\system32\\msvcr71.dll",
-        ):
-        if os.path.exists(f):
-            datafiles.append(f)
-           
-
     extra_options = dict(
-        version=__VERSION__,
-        description="Makes an html report about genotypes",
-        author="cariaso",
-        author_email="cariaso@yahoo.com",
-        url="http://www.promethease.com",
 
-        # I'm fairly certain this isn't doing anything for me
-        data_files=datafiles,
+        # data_files will be copied into the dist directory, useful for
+        # msvcr71.dll, often necessary on very clean windows machines
 
+        data_files = [
+        "C:\\WINDOWS\\system32\\msvcr71.dll",
+##        'icon1.ico',
+##        "C:\\Program Files\\Python25\\lib\\site-packages\\wx-2.8-msw-unicode\\wx\\gdiplus.dll",
+##        "C:\\Program Files\\Python25\\lib\\site-packages\\wx-2.8-msw-unicode\\wx\\MSVCP71.dll",
+                ],
         options = {"py2exe": {
                         "compressed": 1,
                         "optimize": 1,
@@ -84,6 +71,7 @@ elif sys.platform == 'win32':
                         "bundle_files": 3,
                         "packages":["encodings",],
                         'excludes' : [
+                                # all of these seem to be frequently added into the dist directory, but are often not needed
                                 #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
                                 #"pywin.dialogs", "pywin.dialogs.list",
                                 #"Tkconstants","Tkinter",
@@ -105,9 +93,9 @@ else:
         scripts=[mainscript],
         )
 
-setup(name="Promethease",
-      **extra_options
-      )
+options.update(extra_options)
+
+setup(**options)
 
 
 
@@ -119,4 +107,5 @@ if sys.platform == 'darwin':
     os.system('hdiutil create -imagekey zlib-level=9 -srcfolder dist/Promethease.app Promethease')
 
 
-
+elif sys.platform == 'win32':
+    os.system('"c:\Program Files\NSIS\makensis.exe" makepromethease.nsi')
