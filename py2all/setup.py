@@ -77,7 +77,11 @@ elif sys.platform == 'win32':
                         "compressed": 1,
                         "optimize": 1,
                         "ascii": 1,
-                        "bundle_files": 1,
+
+                        # 3 = no bundling
+                        # 1 = bundle as much as possible, which has worked for me sometimes, but seems not to with this tkinter demo app
+                        
+                        "bundle_files": 3,
                         "packages":["encodings",],
                         'excludes' : [
                                 #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
