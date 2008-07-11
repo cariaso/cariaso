@@ -1,18 +1,22 @@
+# Cezar
+#
+# I've begun some commenting and refactorings, if anything seems amiss please check the earliest version from the svn repos
+#
 
-import prepenv
+
+
+
+
+    
+
+
     
 
 import sys, os
 import shutil
 from distutils.core import setup
 
-changeArgv=False
-if sys.platform == 'darwin':
-    changeArgv=True
-    
-prepenv.preHack(changeArgv=changeArgv)
-
-
+__VERSION__ = '0.1'
 
 
 
@@ -22,16 +26,14 @@ shutil.rmtree('build', True)
 
 
 
-rawfile = 'promethease.py'
+rawfile = 'demo.py'
 
 if sys.platform == 'darwin':
     import ez_setup
     ez_setup.use_setuptools()
-    obfile = 'promethease_ob.py'
-    os.system('~/mypy/bin/python2.4 pyobfuscate2 %s > %s' % (rawfile, obfile))
-    mainscript = obfile
+    mainscript = rawfile
 
-
+    import py2app
     sys.argv.append('py2app')
     extra_options = dict(
         setup_requires=['py2app'],
@@ -54,22 +56,17 @@ elif sys.platform == 'win32':
 
 
     extra_options = dict(
-        version=prepenv.__VERSION__,
+        version=__VERSION__,
         description="Makes an html report about genotypes",
         author="cariaso",
         author_email="cariaso@yahoo.com",
         url="http://www.promethease.com",
 
+        # I'm fairly certain this isn't doing anything for me
         data_files=['icon1.ico',
                     "C:\\WINDOWS\\system32\\msvcr71.dll",
-#                    "C:\\Python25\\lib\\site-packages\\wx-2.8-msw-ansi\\wx\\gdiplus.dll",
-#                    "C:\\Python25\\lib\\site-packages\\wx-2.8-msw-ansi\\wx\\MSVCP71.dll",
-
-                    "C:\\Program Files\\Python25\\lib\\site-packages\\wx-2.8-msw-unicode\\wx\\gdiplus.dll",
-                    "C:\\Program Files\\Python25\\lib\\site-packages\\wx-2.8-msw-unicode\\wx\\MSVCP71.dll",
-
-
                     ],
+
         options = {"py2exe": {
                         "compressed": 1,
                         "optimize": 1,
@@ -108,5 +105,6 @@ if sys.platform == 'darwin':
     except OSError, e:
         print e
     os.system('hdiutil create -imagekey zlib-level=9 -srcfolder dist/Promethease.app Promethease')
+
 
 
