@@ -54,6 +54,14 @@ elif sys.platform == 'win32':
     import py2exe
     sys.argv.append('py2exe')
 
+    datafiles = []
+    for f in (
+        'icon1.ico',
+        "C:\\WINDOWS\\system32\\msvcr71.dll",
+        ):
+        if os.path.exists(f):
+            datafiles.append(f)
+           
 
     extra_options = dict(
         version=__VERSION__,
@@ -63,9 +71,7 @@ elif sys.platform == 'win32':
         url="http://www.promethease.com",
 
         # I'm fairly certain this isn't doing anything for me
-        data_files=['icon1.ico',
-                    "C:\\WINDOWS\\system32\\msvcr71.dll",
-                    ],
+        data_files=datafiles,
 
         options = {"py2exe": {
                         "compressed": 1,
@@ -74,14 +80,16 @@ elif sys.platform == 'win32':
                         "bundle_files": 1,
                         "packages":["encodings",],
                         'excludes' : [
-                                "pywin", "pywin.debugger", "pywin.debugger.dbgcon",
-                                "pywin.dialogs", "pywin.dialogs.list",
-                                "Tkconstants","Tkinter","tcl"
+                                #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
+                                #"pywin.dialogs", "pywin.dialogs.list",
+                                #"Tkconstants","Tkinter",
+                                #"tcl"
                                 ]
                         }
                     },
         console=[{"script":rawfile,
-                "icon_resources": [(1, "icon1.ico")]
+                # failing since no icon file
+                #"icon_resources": [(1, "icon1.ico")]
                 }],
         zipfile=None,
         )
