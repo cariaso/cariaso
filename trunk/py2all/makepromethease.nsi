@@ -12,7 +12,7 @@
 
 
 
-; - - - - do not edit below this line, normaly - - - -
+; - - - - do not edit below this line, normally - - - -
 !ifdef compressor
     SetCompressor ${compressor}
 !else
