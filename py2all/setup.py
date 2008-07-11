@@ -3,6 +3,8 @@ import shutil
 from distutils.core import setup
 
 
+targetname = 'DemoProg'
+
 shutil.rmtree('dist', True) 
 shutil.rmtree('build', True) 
 
@@ -12,7 +14,7 @@ rawfile = 'demo.py'
 
 options = dict(
     version='0.1',
-    name='DemoProg',
+    name=targetname,
     description="opens a demo window",
     author="cariaso",
     author_email="cariaso@yahoo.com",
@@ -99,12 +101,13 @@ setup(**options)
 
 
 
+
 if sys.platform == 'darwin':
     try:
-        os.remove('Promethease.dmg')
+        os.remove('%s.dmg' % targetname)
     except OSError, e:
         print e
-    os.system('hdiutil create -imagekey zlib-level=9 -srcfolder dist/Promethease.app Promethease')
+    os.system('hdiutil create -imagekey zlib-level=9 -srcfolder dist/%s.app %s' % (targetname, targetname))
 
 
 elif sys.platform == 'win32':
